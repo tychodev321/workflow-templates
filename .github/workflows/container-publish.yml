@@ -21,7 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-      - uses: tychodev321/workflow-templates/.github/actions/trivy
+      - name: Run Trivy
+        uses: tychodev321/workflow-templates/.github/actions/trivy@main
   sast-syft:
     permissions:
       contents: write # required to upload to the Dependency submission API
@@ -29,7 +30,7 @@ jobs:
     continue-on-error: true
     steps:
       - name: Run Syft
-        uses: tychodev321/workflow-templates/.github/actions/anchore-syft
+        uses: tychodev321/workflow-templates/.github/actions/anchore-syft@main
   sast-grype:
     permissions:
       contents: read # for actions/checkout to fetch code
@@ -39,7 +40,7 @@ jobs:
     continue-on-error: true
     steps:
       - name: Run Grype
-        uses: tychodev321/workflow-templates/.github/actions/anchore-grype
+        uses: tychodev321/workflow-templates/.github/actions/anchore-grype@main
   build:
     outputs:
       outcome: ${{ steps.set-result.outputs.step-result }}
