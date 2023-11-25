@@ -42,6 +42,7 @@ jobs:
       - name: Run Grype
         uses: tychodev321/workflow-templates/.github/actions/anchore-grype@main
   build:
+    needs: [sast-trivy, sast-syft, sast-grype]
     outputs:
       outcome: ${{ steps.set-result.outputs.step-result }}
     runs-on: ubuntu-latest
