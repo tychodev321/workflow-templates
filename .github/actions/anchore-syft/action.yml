@@ -16,14 +16,14 @@ description: 'Anchore Syft SBOM scan'
 runs:
   using: 'composite'
   steps:
-    - name: Checkout the code
+    - name: Checkout Code
       uses: actions/checkout@v3
       
-    - name: Build the Docker image
+    - name: Build Image
       run: docker build . --file Dockerfile --tag ${{ github.repository }}:${{ github.sha }}
       shell: bash
 
-    - name: Scan the image and upload dependency results
+    - name: Run Scan & Upload Results
       uses: anchore/sbom-action@bb716408e75840bbb01e839347cd213767269d4a
       with:
         image: "${{ github.repository }}:${{ github.sha }}"

@@ -14,14 +14,14 @@ description: 'Grype SAST Scan'
 runs:
   using: 'composite'
   steps:
-    - name: Check out the code
+    - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Build the Docker image
+    - name: Build Image
       run: docker build . --file Dockerfile --tag ${{ github.repository }}:${{ github.sha }}
       shell: bash
 
-    - name: Run the Anchore Grype scan action
+    - name: Run Scan
       uses: anchore/scan-action@d5aa5b6cb9414b0c7771438046ff5bcfa2854ed7
       id: scan
       with:
@@ -29,7 +29,7 @@ runs:
         fail-build: true
         severity-cutoff: critical
         
-    - name: Upload vulnerability report
+    - name: Upload Results
       uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: ${{ steps.scan.outputs.sarif }}
