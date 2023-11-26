@@ -32,6 +32,11 @@ on:
         required: false
         default: 'false'
         type: string
+      app-dockerfile:
+        description: 'The App Dockerfile.'
+        required: false
+        default: 'app/Dockerfile'
+        type: string
     outputs:
       result:
         description: The result of the deployment operation
