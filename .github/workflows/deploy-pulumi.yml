@@ -1,0 +1,69 @@
+name: Deploy Pulumi Infra
+on: 
+  workflow_call:
+    inputs:
+      environments: # ['dev','test','acpt','prod']
+        description: 'The environment the deployment is for.'
+        required: false
+        default: "['acpt']"
+        type: string
+      regions: # ['us-east-1','us-west-2']
+        description: 'The region the deployment is for.'
+        required: false
+        default: "['us-east-1']"
+        type: string
+      infra-base-dir:
+        description: 'The Infra Base Directory.'
+        required: false
+        default: 'infra'
+        type: string
+      deploy:
+        description: 'Whether to deploy or not.'
+        required: false
+        default: 'true'
+        type: string
+      destroy:
+        description: 'Whether to destroy or not.'
+        required: false
+        default: 'false'
+        type: string
+
+jobs:
+  deploy:
+    if: inputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/tychodev321/ubuntu-pulumi:latest
+    strategy:
+      matrix:
+        environment: ${{ fromJson(inputs.environments) }}
+        region: ${{ fromJson(inputs.regions) }}
+    steps:
+      - name: Deploy
+        uses: tychodev321/workflow-templates/.github/actions/pulumi@main
+        with:
+          caching: 'true'
+          environment: ${{ matrix.environment }}
+          region: ${{ matrix.region }}
+          infra-base-dir: ${{ inputs.infra-base-dir }}
+          deploy: ${{ inputs.deploy }}
+          destroy: ${{ inputs.destroy }}
+  destroy:
+    if: inputs.destroy == 'true'
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/tychodev321/ubuntu-pulumi:latest
+    strategy:
+      matrix:
+        environment: ${{ fromJson(inputs.environments) }}
+        region: ${{ fromJson(inputs.regions) }}
+    steps:
+      - name: Destroy
+        uses: tychodev321/workflow-templates/.github/actions/pulumi@main
+        with:
+          caching: 'true'
+          environment: ${{ matrix.environment }}
+          region: ${{ matrix.region }}
+          infra-base-dir: ${{ inputs.infra-base-dir }}
+          deploy: ${{ inputs.deploy }}
+          destroy: ${{ inputs.destroy }}

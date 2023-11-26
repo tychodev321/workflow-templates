@@ -2,22 +2,10 @@
 name: Deploy Terraform Module
 description: 'Deploy Terraform Module'
 inputs:
-  environment:
-    description: 'The environment the deployment is for.'
-    required: false
-    default: 'acpt'
-  region:
-    description: 'The region the deployment is for.'
-    required: false
-    default: 'us-east-1'
   deploy:
     description: 'Whether to deploy or not.'
     required: false
     default: 'true'
-  destroy:
-    description: 'Whether to destroy or not.'
-    required: false
-    default: 'false'
   infra-base-dir:
     description: 'The Infra Base Directory.'
     required: false
@@ -27,3 +15,21 @@ runs:
   steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+
+      - name: Setup Deploy
+        run: |
+          cd ${{ inputs.infra-base-dir }}
+        shell: bash
+
+      - name: Install Dependencies
+        id: install
+        run: |
+          # Nothing else needed for Terraform Cloud
+          terraform init
+        shell: bash
+
+      - name: Validate Infra
+        run: |
+          echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+          terraform validate
+        shell: bash

@@ -1,0 +1,26 @@
+name: Deploy Python Module
+on: 
+  workflow_call:
+    inputs:
+      upload-test-results:
+        description: 'Whether to upload test results or not.'
+        required: false
+        default: 'false'
+        type: string
+      upload-module:
+        description: 'Whether to upload module or not.'
+        required: false
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/tychodev321/ubuntu-python:latest
+    steps:
+      - name: Deploy
+        uses: tychodev321/workflow-templates/.github/actions/build-python-module@main
+        with:
+          caching: 'true'
+          upload-test-results: ${{ github.event.inputs.upload-test-results }}
+          upload-module: ${{ github.event.inputs.upload-module }}

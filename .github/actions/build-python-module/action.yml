@@ -14,10 +14,6 @@ inputs:
     description: 'Whether to upload module or not.'
     required: false
     default: 'false'
-  app-base-dir:
-    description: 'The App Base Directory.'
-    required: false
-    default: 'app'
   pytest-test-opts:
     description: 'PyTest Test Options.'
     required: false
@@ -41,7 +37,6 @@ runs:
         
       - name: Setup Build
         run: |
-          cd ${{ inputs.app-base-dir }}
           python --version
           python -m pip --version
           poetry about

@@ -1,0 +1,27 @@
+name: Deploy Terraform Module
+on: 
+  workflow_call:
+    inputs:
+      infra-base-dir:
+        description: 'The Infra Base Directory.'
+        required: false
+        default: 'infra'
+        type: string
+      deploy:
+        description: 'Whether to deploy or not.'
+        required: false
+        default: 'true'
+        type: string
+
+jobs:
+  deploy:
+    if: inputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/tychodev321/ubuntu-terraform:latest
+    steps:
+      - name: Deploy
+        uses: tychodev321/workflow-templates/.github/actions/terraform-module@main
+        with:
+          deploy: ${{ github.event.inputs.deploy }}
+          infra-base-dir: ${{ github.event.inputs.infra-base-dir }}
