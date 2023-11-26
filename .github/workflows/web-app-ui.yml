@@ -100,7 +100,7 @@ jobs:
         region: ${{ fromJson(inputs.regions) }}
     steps:
       - name: Destroy
-        if: inputs.destroy == 'false'
+        if: inputs.destroy == 'true'
         run: |
           echo "Destroying..."
           echo "${{ matrix.environment }}"
