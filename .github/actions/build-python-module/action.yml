@@ -1,0 +1,96 @@
+# TODO: Implement this Custom Action
+name: Build Python Module
+description: 'Build Python Module'
+inputs:
+  caching:
+    description: 'Whether to cache dependencies or not.'
+    required: false
+    default: 'true'
+  upload-test-results:
+    description: 'Whether to upload test results or not.'
+    required: false
+    default: 'false'
+  upload-module:
+    description: 'Whether to upload module or not.'
+    required: false
+    default: 'false'
+  app-base-dir:
+    description: 'The App Base Directory.'
+    required: false
+    default: 'app'
+  pytest-test-opts:
+    description: 'PyTest Test Options.'
+    required: false
+    default: 'tests/'
+  pytest-cli-opts:
+    description: 'PyTest CLI Options.'
+    required: false
+    default: ''
+outputs:
+  used-cache:
+    description: 'Whether the cache was used.'
+    value: ${{ steps.install.outputs.cache }}
+  uploaded-test-results:
+    description: 'Whether the test results were uploaded.'
+    value: ${{ steps.upload-results.outputs.uploaded }}
+runs:
+  using: 'composite'
+  steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        
+      - name: Setup Build
+        run: |
+          cd ${{ inputs.app-base-dir }}
+          python --version
+          python -m pip --version
+          poetry about
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+        shell: bash
+
+      - name: Cache Dependencies
+        if: inputs.caching == 'true'
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: deps-python-venv-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install Dependencies
+        id: install
+        if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
+        run: |
+          poetry install
+          echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Build Code
+        run: |
+          echo "Not Implemented"
+        shell: bash
+
+      - name: Lint Code
+        run: |
+          echo "Not Implemented"
+        shell: bash
+
+      - name: Test Code
+        run: |
+          poetry run pytest ${{ inputs.pytest-test-opts }} ${{ inputs.pytest-cli-opts }} --ignore=tests/bdd --junitxml=tests/reports/pytests-unit.xml
+        shell: bash
+          
+      - name: Upload Results
+        if: inputs.upload-test-results == 'true'
+        id: upload-results
+        run: |
+          echo "Not Implemented"
+          echo "uploaded='${{ inputs.upload-test-results }}'" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Upload Module
+        if: inputs.module == 'true'
+        id: upload-module
+        run: |
+          echo "Not Implemented"
+        shell: bash

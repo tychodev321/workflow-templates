@@ -1,5 +1,5 @@
-name: Deploy Pulumi
-description: 'Deploy Pulumi'
+name: Package Lambda
+description: 'Package Lambda'
 inputs:
   caching:
     description: 'Whether to cache dependencies or not.'

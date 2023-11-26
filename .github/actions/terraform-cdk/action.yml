@@ -1,5 +1,5 @@
-name: Deploy Pulumi
-description: 'Deploy Pulumi'
+name: Deploy Terraform CDK
+description: 'Deploy Terraform CDK'
 inputs:
   caching:
     description: 'Whether to cache dependencies or not.'
@@ -24,7 +24,7 @@ inputs:
   infra-base-dir:
     description: 'The Infra Base Directory.'
     required: false
-    default: 'infra'
+    default: '.'
 runs:
   using: 'composite'
   steps:
@@ -34,13 +34,6 @@ runs:
       - name: Setup Deploy
         run: |
           cd ${{ inputs.infra-base-dir }}
-          echo "Logging into Pulumi..."
-          pulumi login
-          # pulumi org set-default tychodev-org
-          echo "Initializing Pulumi Stack for ${{ inputs.environment }} ${{ inputs.region }}..."
-          export STACK_NAME="${{ inputs.environment }}-${{ inputs.region }}"
-          pulumi stack select $STACK_NAME --create
-
           echo "Configuring Python..."
           python --version
           python -m pip --version
@@ -68,20 +61,19 @@ runs:
       - name: Validate Infra
         run: |
           echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
-          poetry run pulumi preview --save-plan=${{ inputs.environment }}-${{ inputs.region }}-plan.json
+          poetry run cdktf diff
         shell: bash
 
       - name: Deploy Infra
         if: inputs.deploy == 'true'
         run: |
           echo "Deploying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
-          poetry run pulumi up --yes
-          # poetry run pulumi up --yes --plan=${{ inputs.environment }}-${{ inputs.region }}-plan.json
+          poetry run cdktf deploy --auto-approve
         shell: bash
 
       - name: Destroy Infra
         if: inputs.destroy == 'true'
         run: |
           echo "Destroying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
-          poetry run pulumi destroy --yes
+          poetry run cdktf destroy --auto-approve
         shell: bash

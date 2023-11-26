@@ -1,0 +1,43 @@
+name: Deploy Ansible
+description: 'Deploy Ansible'
+inputs:
+  environment:
+    description: 'The environment the deployment is for.'
+    required: false
+    default: 'acpt'
+  region:
+    description: 'The region the deployment is for.'
+    required: false
+    default: 'us-east-1'
+  deploy:
+    description: 'Whether to deploy or not.'
+    required: false
+    default: 'true'
+  playbook-file-name:
+    description: 'The Ansible Playbook to run.'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Deploy
+        run: |
+          export AWS_DEFAULT_REGION=${{ inputs.region }}
+          ansible --version
+          ansible-playbook --version
+        shell: bash
+
+      - name: Validate Infra
+        run: |
+          echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+          ansible-lint ${{ inputs.playbook-file-name }}
+        shell: bash
+
+      - name: Deploy Infra
+        if: inputs.deploy == 'true'
+        run: |
+          echo "Deploying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+          ansible-playbook ${{ inputs.playbook-file-name }}
+        shell: bash

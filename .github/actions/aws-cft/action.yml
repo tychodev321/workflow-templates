@@ -1,0 +1,60 @@
+name: Deploy CloudFormation
+description: 'Deploy CloudFormation'
+inputs:
+  environment:
+    description: 'The environment the deployment is for.'
+    required: false
+    default: 'acpt'
+  region:
+    description: 'The region the deployment is for.'
+    required: false
+    default: 'us-east-1'
+  deploy:
+    description: 'Whether to deploy or not.'
+    required: false
+    default: 'true'
+  destroy:
+    description: 'Whether to destroy or not.'
+    required: false
+    default: 'false'
+  infra-base-dir:
+    description: 'The Infra Base Directory.'
+    required: false
+    default: '.'
+  template-file-name:
+    description: 'File name of the CloudFormation Template.'
+    required: false
+  stack-name:
+    description: 'Stack name for the CloudFormation Infrastructure.'
+    required: false
+runs:
+  using: 'composite'
+  steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Deploy
+        run: |
+          cd ${{ inputs.infra-base-dir }}
+          export AWS_DEFAULT_REGION=${{ inputs.region }}
+        shell: bash
+
+      - name: Validate Infra
+        run: |
+          echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+          aws cloudformation validate-template --template-body file://${{ inputs.template-file-name }}
+        shell: bash
+
+      - name: Deploy Infra
+        if: inputs.deploy == 'true'
+        run: |
+          echo "Deploying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+          aws cloudformation deploy --template-file ${{ inputs.template-file-name }} --stack-name ${{ inputs.stack-name }}
+        shell: bash
+
+      - name: Destroy Infra
+        if: inputs.destroy == 'true'
+        run: |
+          echo "Destroying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+          aws cloudformation delete-stack --stack-name ${{ inputs.stack-name }}
+        shell: bash

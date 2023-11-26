@@ -1,0 +1,29 @@
+# TODO: Implement this Custom Action
+name: Deploy Terraform Module
+description: 'Deploy Terraform Module'
+inputs:
+  environment:
+    description: 'The environment the deployment is for.'
+    required: false
+    default: 'acpt'
+  region:
+    description: 'The region the deployment is for.'
+    required: false
+    default: 'us-east-1'
+  deploy:
+    description: 'Whether to deploy or not.'
+    required: false
+    default: 'true'
+  destroy:
+    description: 'Whether to destroy or not.'
+    required: false
+    default: 'false'
+  infra-base-dir:
+    description: 'The Infra Base Directory.'
+    required: false
+    default: '.'
+runs:
+  using: 'composite'
+  steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3

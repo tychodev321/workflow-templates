@@ -1,0 +1,68 @@
+name: Deploy Terraform
+description: 'Deploy Terraform'
+inputs:
+  environment:
+    description: 'The environment the deployment is for.'
+    required: false
+    default: 'acpt'
+  region:
+    description: 'The region the deployment is for.'
+    required: false
+    default: 'us-east-1'
+  deploy:
+    description: 'Whether to deploy or not.'
+    required: false
+    default: 'true'
+  destroy:
+    description: 'Whether to destroy or not.'
+    required: false
+    default: 'false'
+  infra-base-dir:
+    description: 'The Infra Base Directory.'
+    required: false
+    default: 'infra'
+runs:
+  using: 'composite'
+  steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Deploy
+        run: |
+          cd ${{ inputs.infra-base-dir }}
+          export AWS_DEFAULT_REGION=${{ inputs.region }}
+        shell: bash
+
+      - name: Install Dependencies
+        id: install
+        run: |
+          # Nothing else needed for Terraform Cloud
+          terraform init
+        shell: bash
+
+      - name: Validate Infra
+        run: |
+          echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+          terraform validate
+        shell: bash
+
+      - name: Plan Infra
+        if: inputs.deploy == 'true'
+        run: |
+          echo "Deploying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+          terraform plan -refresh=true -var-file=${{ inputs.environment }}-${{ inputs.region }}.tfvars -out ${{ inputs.environment }}-${{ inputs.region }}.plan
+        shell: bash
+
+      - name: Deploy Infra
+        if: inputs.deploy == 'true'
+        run: |
+          echo "Deploying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+          terraform apply -auto-approve -refresh=true ${{ inputs.environment }}-${{ inputs.region }}.plan
+        shell: bash
+
+      - name: Destroy Infra
+        if: inputs.destroy == 'true'
+        run: |
+          echo "Destroying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+          terraform destroy -auto-approve -refresh=true -var-file="${{ inputs.environment }}-${{ inputs.region }}.tfvars"
+        shell: bash

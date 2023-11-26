@@ -1,0 +1,40 @@
+name: Deploy Packer
+description: 'Deploy Packer'
+inputs:
+  environment:
+    description: 'The environment the deployment is for.'
+    required: false
+    default: 'acpt'
+  region:
+    description: 'The region the deployment is for.'
+    required: false
+    default: 'us-east-1'
+  deploy:
+    description: 'Whether to deploy or not.'
+    required: false
+    default: 'true'
+runs:
+  using: 'composite'
+  steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Deploy
+        run: |
+          export AWS_DEFAULT_REGION=${{ inputs.region }}
+          packer version
+          packer init .
+        shell: bash
+
+      - name: Validate Infra
+        run: |
+          echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+          packer validate -var-file="${{ inputs.environment }}-${{ inputs.region }}.pkrvars.hcl" .
+        shell: bash
+
+      - name: Deploy Infra
+        if: inputs.deploy == 'true'
+        run: |
+          echo "Deploying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+          packer build -var-file="${{ inputs.environment }}-${{ inputs.region }}.pkrvars.hcl" .
+        shell: bash
