@@ -1,0 +1,83 @@
+name: Deploy Pulumi
+description: 'Deploy Pulumi'
+inputs:
+  environment:
+    description: 'The environment the deployment is for.'
+    required: false
+    default: 'acpt'
+  region:
+    description: 'The region the deployment is for.'
+    required: false
+    default: 'us-east-1'
+  deploy:
+    description: 'Whether to deploy or not.'
+    required: false
+    default: 'true'
+  destroy:
+    description: 'Whether to destroy or not.'
+    required: false
+    default: 'false'
+  infra-base-dir:
+    description: 'The Infra Base Directory.'
+    required: false
+    default: 'infra'
+runs:
+  using: 'composite'
+  steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Deploy
+        run: |
+          cd ${{ inputs.infra-base-dir }}
+          echo "Logging into Pulumi..."
+          pulumi login
+          # pulumi org set-default tychodev-org
+          echo "Initializing Pulumi Stack for ${{ inputs.environment }} ${{ inputs.region }}..."
+          export STACK_NAME="${{ inputs.environment }}-${{ inputs.region }}"
+          pulumi stack select $STACK_NAME --create
+
+          echo "Configuring Python..."
+          python --version
+          python -m pip --version
+          poetry about
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+        shell: bash
+
+      - name: Cache Dependencies
+        if: inputs.caching == 'true'
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: deps-python-venv-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install Dependencies
+        id: install
+        if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
+        run: |
+          poetry install
+          echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Validate Infra
+        run: |
+          echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+          poetry run pulumi preview --save-plan=${{ inputs.environment }}-${{ inputs.region }}-plan.json
+        shell: bash
+
+      - name: Deploy Infra
+        if: inputs.deploy == 'true'
+        run: |
+          echo "Deploying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+          poetry run pulumi up --yes
+          # poetry run pulumi up --yes --plan=${{ inputs.environment }}-${{ inputs.region }}-plan.json
+        shell: bash
+
+      - name: Destroy Infra
+        if: inputs.destroy == 'true'
+        run: |
+          echo "Destroying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+          poetry run pulumi destroy --yes
+        shell: bash

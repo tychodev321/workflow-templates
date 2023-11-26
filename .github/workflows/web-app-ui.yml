@@ -3,12 +3,12 @@ on:
   workflow_call:
     inputs:
       environments: # ['dev','test','acpt','prod']
-        description: The environment the deployment is for.
+        description: 'The environment the deployment is for.'
         required: false
         default: "['acpt']"
         type: string
       regions: # ['us-east-1','us-west-2']
-        description: The region the deployment is for.
+        description: 'The region the deployment is for.'
         required: false
         default: "['us-east-1']"
         type: string

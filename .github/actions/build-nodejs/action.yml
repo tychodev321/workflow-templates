@@ -27,6 +27,9 @@ outputs:
 runs:
   using: 'composite'
   steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        
       - name: Setup Build
         run: |
           cd ${{ inputs.app-base-dir }}
@@ -34,9 +37,6 @@ runs:
           npm --version
           yarn --version
         shell: bash
-
-      - name: Checkout Code
-        uses: actions/checkout@v3
 
       - name: Cache Dependencies
         if: inputs.caching == 'true'
