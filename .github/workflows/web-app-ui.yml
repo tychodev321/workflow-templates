@@ -2,15 +2,15 @@ name: Deploy NextJS UI
 on: 
   workflow_call:
     inputs:
-      environment: # dev|test|acpt|prod
+      environments: # dev|test|acpt|prod
         description: The environment the deployment is for.
         required: false
-        default: 'acpt'
+        default: "['dev','test','acpt','prod']"
         type: string
-      region: # us-east-1|us-west-2
+      regions: # us-east-1|us-west-2
         description: The region the deployment is for.
         required: false
-        default: 'us-east-1'
+        default: "['us-east-1','us-west-2']"
         type: string
       app-base-dir:
         description: 'The App Base Directory.'
@@ -37,6 +37,16 @@ on:
         required: false
         default: 'Dockerfile'
         type: string
+      deploy:
+        description: 'Whether to deploy or not.'
+        required: false
+        default: 'true'
+        type: string
+      destroy:
+        description: 'Whether to destroy or not.'
+        required: false
+        default: 'false'
+        type: string
     outputs:
       result:
         description: The result of the deployment operation
@@ -59,13 +69,39 @@ jobs:
       contents: read
       packages: write
     steps:
-      - name: Run Build
-        uses: tychodev321/workflow-templates/.github/actions/build-nodejs@main
-        with:
-          app-base-dir: ${{ github.event.inputs.app-base-dir }}
-          upload-test-results: ${{ github.event.inputs.upload-test-results }}
-          run-bdd-test: ${{ github.event.inputs.run-bdd-test }}
-          caching: 'true'
+      # - name: Run Build
+      #   uses: tychodev321/workflow-templates/.github/actions/build-nodejs@main
+      #   with:
+      #     app-base-dir: ${{ github.event.inputs.app-base-dir }}
+      #     upload-test-results: ${{ github.event.inputs.upload-test-results }}
+      #     run-bdd-test: ${{ github.event.inputs.run-bdd-test }}
+      #     caching: 'true'
       - name: Set result output
         id: set-result
         run: echo "step-result=success" >> $GITHUB_OUTPUT
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: ${{ fromJson(inputs.environments) }}
+        region: ${{ fromJson(inputs.regions) }}
+    steps:
+      - name: Deploy
+        if: inputs.deploy == 'true'
+        run: |
+          echo "Deploying..."
+          echo "${{ matrix.environment }}"
+          echo "${{ matrix.region }}"
+  destroy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: ${{ fromJson(inputs.environments) }}
+        region: ${{ fromJson(inputs.regions) }}
+    steps:
+      - name: Destroy
+        if: inputs.deploy == 'false'
+        run: |
+          echo "Destroying..."
+          echo "${{ matrix.environment }}"
+          echo "${{ matrix.region }}"
