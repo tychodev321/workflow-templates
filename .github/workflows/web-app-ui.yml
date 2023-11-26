@@ -80,6 +80,7 @@ jobs:
         id: set-result
         run: echo "step-result=success" >> $GITHUB_OUTPUT
   deploy:
+    if: inputs.deploy == 'true'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -87,7 +88,6 @@ jobs:
         region: ${{ fromJson(inputs.regions) }}
     steps:
       - name: Deploy
-        if: inputs.deploy == 'true'
         run: |
           echo "Deploying..."
           echo "${{ matrix.environment }}"
