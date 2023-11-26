@@ -2,15 +2,15 @@ name: Deploy FastAPI API
 on: 
   workflow_call:
     inputs:
-      environments: # dev|test|acpt|prod
+      environments: # ['dev','test','acpt','prod']
         description: The environment the deployment is for.
         required: false
-        default: "['dev','test','acpt','prod']"
+        default: "['acpt']"
         type: string
-      regions: # us-east-1|us-west-2
+      regions: # ['us-east-1','us-west-2']
         description: The region the deployment is for.
         required: false
-        default: "['us-east-1','us-west-2']"
+        default: "['us-east-1']"
         type: string
       app-base-dir:
         description: 'The App Base Directory.'
@@ -79,3 +79,29 @@ jobs:
       - name: Set result output
         id: set-result
         run: echo "step-result=success" >> $GITHUB_OUTPUT
+  deploy: # TODO: Integrate with Custom Pulumi Action
+    if: inputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: ${{ fromJson(inputs.environments) }}
+        region: ${{ fromJson(inputs.regions) }}
+    steps:
+      - name: Deploy
+        run: |
+          echo "Deploying..."
+          echo "${{ matrix.environment }}"
+          echo "${{ matrix.region }}"
+  destroy: # TODO: Integrate with Custom Pulumi Action
+    if: inputs.destroy == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: ${{ fromJson(inputs.environments) }}
+        region: ${{ fromJson(inputs.regions) }}
+    steps:
+      - name: Destroy
+        run: |
+          echo "Destroying..."
+          echo "${{ matrix.environment }}"
+          echo "${{ matrix.region }}"

@@ -79,7 +79,7 @@ jobs:
       - name: Set result output
         id: set-result
         run: echo "step-result=success" >> $GITHUB_OUTPUT
-  deploy:
+  deploy: # TODO: Integrate with Custom Pulumi Action
     if: inputs.deploy == 'true'
     runs-on: ubuntu-latest
     strategy:
@@ -92,7 +92,7 @@ jobs:
           echo "Deploying..."
           echo "${{ matrix.environment }}"
           echo "${{ matrix.region }}"
-  destroy:
+  destroy: # TODO: Integrate with Custom Pulumi Action
     if: inputs.destroy == 'true'
     runs-on: ubuntu-latest
     strategy:
