@@ -2,12 +2,12 @@ name: Deploy NextJS UI
 on: 
   workflow_call:
     inputs:
-      environments: # dev|test|acpt|prod
+      environments: # ['dev','test','acpt','prod']
         description: The environment the deployment is for.
         required: false
         default: "['dev','test','acpt','prod']"
         type: string
-      regions: # us-east-1|us-west-2
+      regions: # ['us-east-1','us-west-2']
         description: The region the deployment is for.
         required: false
         default: "['us-east-1','us-west-2']"
