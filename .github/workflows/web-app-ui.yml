@@ -93,6 +93,7 @@ jobs:
           echo "${{ matrix.environment }}"
           echo "${{ matrix.region }}"
   destroy:
+    if: inputs.destroy == 'true'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -100,7 +101,6 @@ jobs:
         region: ${{ fromJson(inputs.regions) }}
     steps:
       - name: Destroy
-        if: inputs.destroy == 'true'
         run: |
           echo "Destroying..."
           echo "${{ matrix.environment }}"
