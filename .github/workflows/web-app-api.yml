@@ -17,10 +17,11 @@ jobs:
     outputs:
       outcome: ${{ steps.set-result.outputs.step-result }}
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/tychodev321/ubuntu-python:latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
+      - name: Run Build
+        uses: tychodev321/workflow-templates/.github/actions/build-python@main
       - name: Set result output
         id: set-result
         run: echo "step-result=success" >> $GITHUB_OUTPUT

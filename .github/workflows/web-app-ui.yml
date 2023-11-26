@@ -18,10 +18,10 @@ jobs:
       outcome: ${{ steps.set-result.outputs.step-result }}
     runs-on: ubuntu-latest
     container:
-      image: node:16
+      image: ghcr.io/tychodev321/ubuntu-nodejs:latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Run Build
+        uses: tychodev321/workflow-templates/.github/actions/build-nodejs@main
       - name: Set result output
         id: set-result
         run: echo "step-result=success" >> $GITHUB_OUTPUT
