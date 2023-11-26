@@ -5,7 +5,7 @@ on:
       environments: # ['dev','test','acpt','prod']
         description: The environment the deployment is for.
         required: false
-        default: "['dev','test','acpt','prod']"
+        default: "['acpt']"
         type: string
       regions: # ['us-east-1','us-west-2']
         description: The region the deployment is for.
