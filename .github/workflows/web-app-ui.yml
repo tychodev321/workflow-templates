@@ -10,7 +10,7 @@ on:
       regions: # ['us-east-1','us-west-2']
         description: The region the deployment is for.
         required: false
-        default: "['us-east-1','us-west-2']"
+        default: "['us-east-1']"
         type: string
       app-base-dir:
         description: 'The App Base Directory.'
