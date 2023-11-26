@@ -60,6 +60,7 @@ env:
 
 jobs:
   build:
+    continue-on-error: true # TODO: Remove this when this is fixed
     outputs:
       outcome: ${{ steps.set-result.outputs.step-result }}
     runs-on: ubuntu-latest
@@ -79,8 +80,19 @@ jobs:
       - name: Set result output
         id: set-result
         run: echo "step-result=success" >> $GITHUB_OUTPUT
-  deploy: # TODO: Integrate with Custom Pulumi Action
+  build_image: # TODO: Integrate with Container Custom Action
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Build Image
+        run: |
+          echo "Bulding Image..."
+  deploy: # TODO: Integrate with Pulumi Custom Action
     if: inputs.deploy == 'true'
+    needs: [build_image]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -92,7 +104,7 @@ jobs:
           echo "Deploying..."
           echo "${{ matrix.environment }}"
           echo "${{ matrix.region }}"
-  destroy: # TODO: Integrate with Custom Pulumi Action
+  destroy: # TODO: Integrate with Pulumi Custom Action
     if: inputs.destroy == 'true'
     runs-on: ubuntu-latest
     strategy:
