@@ -21,9 +21,6 @@ outputs:
   used-cache:
     description: 'Whether the cache was used.'
     value: ${{ steps.install.outputs.cache }}
-  uploaded-test-results:
-    description: 'Whether the test results were uploaded.'
-    value: ${{ steps.upload-results.outputs.uploaded }}
 runs:
   using: 'composite'
   steps:
@@ -75,10 +72,18 @@ runs:
           yarn run e2e
         shell: bash
           
-      - name: Upload Results
-        if: inputs.upload-test-results == 'true'
-        id: upload-results
-        run: |
-          echo "Not Implemented"
-          echo "uploaded='${{ inputs.upload-test-results }}'" >> $GITHUB_OUTPUT
-        shell: bash
+      - name: Generate Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()    # run this step even if previous step failed
+        with:
+          name: JEST Tests
+          path: reports/jest-*.xml
+          reporter: jest-junit
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
+        if: always() 
+        with:
+          name: Upload Test Results
+          path: |
+            reports/jest-*.xml

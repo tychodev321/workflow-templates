@@ -26,9 +26,6 @@ outputs:
   used-cache:
     description: 'Whether the cache was used.'
     value: ${{ steps.install.outputs.cache }}
-  uploaded-test-results:
-    description: 'Whether the test results were uploaded.'
-    value: ${{ steps.upload-results.outputs.uploaded }}
 runs:
   using: 'composite'
   steps:
@@ -62,7 +59,7 @@ runs:
 
       - name: Build Code
         run: |
-          echo "Not Implemented"
+          poetry build
         shell: bash
 
       - name: Lint Code
@@ -74,18 +71,27 @@ runs:
         run: |
           poetry run pytest ${{ inputs.pytest-test-opts }} ${{ inputs.pytest-cli-opts }} --ignore=tests/bdd --junitxml=tests/reports/pytests-unit.xml
         shell: bash
-          
-      - name: Upload Results
-        if: inputs.upload-test-results == 'true'
-        id: upload-results
-        run: |
-          echo "Not Implemented"
-          echo "uploaded='${{ inputs.upload-test-results }}'" >> $GITHUB_OUTPUT
-        shell: bash
+
+      - name: Generate Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()                # run this step even if previous step failed
+        with:
+          name: PyTest Tests
+          path: tests/reports/pytests-unit.xml
+          reporter: java-junit             
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: Upload Test Results
+          path: |
+            tests/reports/pytests-unit.xml
+            tests/reports/pytests-bdd.xml
 
       - name: Upload Module
         if: inputs.module == 'true'
         id: upload-module
         run: |
-          echo "Not Implemented"
+          poetry publish --repository ????
         shell: bash

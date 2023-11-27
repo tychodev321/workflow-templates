@@ -1,48 +1,30 @@
-# TODO: Implement this Custom Action
 name: Package Lambda
-description: 'Package Lambda'
+description: 'Build Lambda'
 inputs:
   caching:
     description: 'Whether to cache dependencies or not.'
     required: false
     default: 'true'
-  environment:
-    description: 'The environment the deployment is for.'
+  app-base-dir:
+    description: 'The App Base Directory.'
     required: false
-    default: 'acpt'
-  region:
-    description: 'The region the deployment is for.'
-    required: false
-    default: 'us-east-1'
-  deploy:
-    description: 'Whether to deploy or not.'
-    required: false
-    default: 'true'
-  destroy:
-    description: 'Whether to destroy or not.'
-    required: false
-    default: 'false'
-  infra-base-dir:
-    description: 'The Infra Base Directory.'
-    required: false
-    default: 'infra'
+    default: 'app'
+outputs:
+  used-cache:
+    description: 'Whether the cache was used.'
+    value: ${{ steps.install.outputs.cache }}
+  uploaded-test-results:
+    description: 'Whether the test results were uploaded.'
+    value: ${{ steps.upload-results.outputs.uploaded }}
 runs:
   using: 'composite'
   steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-
-      - name: Setup Deploy
+        
+      - name: Setup Build
         run: |
-          cd ${{ inputs.infra-base-dir }}
-          echo "Logging into Pulumi..."
-          pulumi login
-          # pulumi org set-default tychodev-org
-          echo "Initializing Pulumi Stack for ${{ inputs.environment }} ${{ inputs.region }}..."
-          export STACK_NAME="${{ inputs.environment }}-${{ inputs.region }}"
-          pulumi stack select $STACK_NAME --create
-
-          echo "Configuring Python..."
+          cd ${{ inputs.app-base-dir }}
           python --version
           python -m pip --version
           poetry about
@@ -66,23 +48,32 @@ runs:
           echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Validate Infra
+      - name: Package Lambda Code
         run: |
-          echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
-          poetry run pulumi preview --save-plan=${{ inputs.environment }}-${{ inputs.region }}-plan.json
+          zip -x '*.venv*' -x '*.pyc*'  -r -q ../lambda.zip .
+          cd ..
         shell: bash
 
-      - name: Deploy Infra
-        if: inputs.deploy == 'true'
+      - name: Package Lambda Layer
         run: |
-          echo "Deploying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
-          poetry run pulumi up --yes
-          # poetry run pulumi up --yes --plan=${{ inputs.environment }}-${{ inputs.region }}-plan.json
+          mkdir -p python
+          cp -rp .venv/lib/python3.10/site-packages/* python
+          rm -rf python/wheel*
+          rm -rf python/easy-install*
+          rm -rf python/setuptools*
+          rm -rf python/virtualenv*
+          rm -rf python/pip*
+          rm -rf python/bin*
+          rm -rf python/include*
+          rm -rf python/*.dist-info
+          zip -r9 -q ../layer.zip python
+          cd ..
         shell: bash
 
-      - name: Destroy Infra
-        if: inputs.destroy == 'true'
-        run: |
-          echo "Destroying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
-          poetry run pulumi destroy --yes
-        shell: bash
+      - name: Upload Packaged Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: lambda-files
+          path: |
+            lambda.zip
+            layer.zip
