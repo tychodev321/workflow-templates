@@ -29,7 +29,18 @@ on:
         type: string
 
 jobs:
+  sast-tfsec:
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Run TFSec
+        uses: tychodev321/workflow-templates/.github/actions/tf-sec@main
   deploy:
+    needs: [sast-tfsec]
     if: inputs.deploy == 'true'
     runs-on: ubuntu-latest
     container:

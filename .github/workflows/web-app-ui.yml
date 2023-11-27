@@ -59,7 +59,24 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  sast-codeql:
+    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ $detected-codeql-languages ]
+    steps:
+      - name: Run Scan
+        uses: tychodev321/workflow-templates/.github/actions/codeql@main
+        with:
+          language: ${{ matrix.language }}
   build:
+    needs: [sast-codeql]
     continue-on-error: true # TODO: Remove this when this is fixed
     outputs:
       outcome: ${{ steps.set-result.outputs.step-result }}
@@ -70,13 +87,13 @@ jobs:
       contents: read
       packages: write
     steps:
-      # - name: Run Build
-      #   uses: tychodev321/workflow-templates/.github/actions/build-nodejs@main
-      #   with:
-      #     app-base-dir: ${{ github.event.inputs.app-base-dir }}
-      #     upload-test-results: ${{ github.event.inputs.upload-test-results }}
-      #     run-bdd-test: ${{ github.event.inputs.run-bdd-test }}
-      #     caching: 'true'
+      - name: Run Build
+        uses: tychodev321/workflow-templates/.github/actions/build-nodejs@main
+        with:
+          app-base-dir: ${{ github.event.inputs.app-base-dir }}
+          upload-test-results: ${{ github.event.inputs.upload-test-results }}
+          run-bdd-test: ${{ github.event.inputs.run-bdd-test }}
+          caching: 'true'
       - name: Set result output
         id: set-result
         run: echo "step-result=success" >> $GITHUB_OUTPUT
