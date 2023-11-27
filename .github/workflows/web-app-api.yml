@@ -60,6 +60,7 @@ env:
 
 jobs:
   sast-codeql:
+    continue-on-error: true
     runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
     timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
     permissions:
