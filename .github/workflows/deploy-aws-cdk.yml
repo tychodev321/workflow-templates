@@ -37,7 +37,7 @@ jobs:
     if: inputs.deploy == 'true'
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/tychodev321/ubuntu-aws-cdk:latest
+      image: ghcr.io/tychodev321/ubuntu-aws-cdk:main
     strategy:
       matrix:
         environment: ${{ fromJson(inputs.environments) }}
@@ -52,13 +52,12 @@ jobs:
           infra-base-dir: ${{ inputs.infra-base-dir }}
           deploy: ${{ inputs.deploy }}
           destroy: ${{ inputs.destroy }}
-          cahing: 'true'
           aws-account-id: ${{ inputs.aws-account-id }}
   destroy:
     if: inputs.destroy == 'true'
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/tychodev321/ubuntu-aws-cdk:latest
+      image: ghcr.io/tychodev321/ubuntu-aws-cdk:main
     strategy:
       matrix:
         environment: ${{ fromJson(inputs.environments) }}

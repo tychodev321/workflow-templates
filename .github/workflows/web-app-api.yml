@@ -83,7 +83,7 @@ jobs:
       outcome: ${{ steps.set-result.outputs.step-result }}
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/tychodev321/ubuntu-python:latest
+      image: ghcr.io/tychodev321/ubuntu-python:main
     permissions:
       contents: read
       packages: write

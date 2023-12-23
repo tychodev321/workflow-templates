@@ -41,7 +41,7 @@ jobs:
     if: inputs.deploy == 'true'
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/tychodev321/ubuntu-awscli:latest
+      image: ghcr.io/tychodev321/ubuntu-awscli:main
     strategy:
       matrix:
         environment: ${{ fromJson(inputs.environments) }}
@@ -61,7 +61,7 @@ jobs:
     if: inputs.destroy == 'true'
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/tychodev321/ubuntu-awscli:latest
+      image: ghcr.io/tychodev321/ubuntu-awscli:main
     strategy:
       matrix:
         environment: ${{ fromJson(inputs.environments) }}

@@ -16,7 +16,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/tychodev321/ubuntu-python:latest
+      image: ghcr.io/tychodev321/ubuntu-python:main
     steps:
       - name: Deploy
         uses: tychodev321/workflow-templates/.github/actions/build-python-module@main

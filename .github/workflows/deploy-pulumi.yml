@@ -33,7 +33,7 @@ jobs:
     if: inputs.deploy == 'true'
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/tychodev321/ubuntu-pulumi:latest
+      image: ghcr.io/tychodev321/ubuntu-pulumi:main
     strategy:
       matrix:
         environment: ${{ fromJson(inputs.environments) }}
@@ -52,7 +52,7 @@ jobs:
     if: inputs.destroy == 'true'
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/tychodev321/ubuntu-pulumi:latest
+      image: ghcr.io/tychodev321/ubuntu-pulumi:main
     strategy:
       matrix:
         environment: ${{ fromJson(inputs.environments) }}

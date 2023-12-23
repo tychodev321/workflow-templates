@@ -29,7 +29,7 @@ jobs:
     if: inputs.deploy == 'true'
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/tychodev321/ubuntu-terraform:latest
+      image: ghcr.io/tychodev321/ubuntu-terraform:main
     steps:
       - name: Deploy
         uses: tychodev321/workflow-templates/.github/actions/terraform-module@main
