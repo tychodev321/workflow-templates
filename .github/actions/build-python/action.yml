@@ -39,9 +39,8 @@ runs:
         uses: actions/checkout@v3
         
       - name: Setup Build
+        working-directory: ${{ inputs.app-base-dir }}
         run: |
-          cd ${{ inputs.app-base-dir }}
-          ls -ltr
           python --version
           python -m pip --version
           poetry about
