@@ -40,6 +40,7 @@ runs:
         
       - name: Setup Build
         run: |
+          cd ${{ inputs.app-base-dir }}
           python --version
           python -m pip --version
           poetry about
@@ -52,7 +53,7 @@ runs:
         id: cache
         uses: actions/cache@v3
         with:
-          path: .venv
+          path: ${{ inputs.app-base-dir }}/.venv
           key: deps-python-venv-${{ hashFiles('**/poetry.lock') }}
 
       - name: Install Dependencies
@@ -66,22 +67,26 @@ runs:
 
       - name: Build Code
         run: |
+          cd ${{ inputs.app-base-dir }}
           echo "Not Implemented"
         shell: bash
 
       - name: Lint Code
         run: |
+          cd ${{ inputs.app-base-dir }}
           echo "Not Implemented"
         shell: bash
 
       - name: Test Code
         run: |
+          cd ${{ inputs.app-base-dir }}
           poetry run pytest ${{ inputs.pytest-test-opts }} ${{ inputs.pytest-cli-opts }} --ignore=tests/bdd --junitxml=tests/reports/pytests-unit.xml
         shell: bash
 
       - name: Test BDD Code
         if: inputs.run-bdd-test == 'true'
         run: |
+          cd ${{ inputs.app-base-dir }}
           poetry run pytest ${{ inputs.pytest-test-opts }} ${{ inputs.pytest-cli-opts }} --ignore=tests/unit --junitxml=tests/reports/pytests-bdd.xml
         shell: bash
           
@@ -90,7 +95,7 @@ runs:
         if: success() || failure()                # run this step even if previous step failed
         with:
           name: PyTest Tests
-          path: tests/reports/pytests-unit.xml
+          path: ${{ inputs.app-base-dir }}/tests/reports/pytests-unit.xml
           reporter: java-junit             
 
       - name: Upload Test Results
@@ -99,5 +104,5 @@ runs:
         with:
           name: Upload Test Results
           path: |
-            tests/reports/pytests-unit.xml
-            tests/reports/pytests-bdd.xml
+            ${{ inputs.app-base-dir }}/tests/reports/pytests-unit.xml
+            ${{ inputs.app-base-dir }}/tests/reports/pytests-bdd.xml
