@@ -41,6 +41,7 @@ runs:
       - name: Setup Build
         run: |
           cd ${{ inputs.app-base-dir }}
+          ls -ltr
           python --version
           python -m pip --version
           poetry about
@@ -61,7 +62,6 @@ runs:
         if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
         run: |
           poetry install
-          ls -ltr
           echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
         shell: bash
 
