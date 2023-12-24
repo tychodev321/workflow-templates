@@ -59,19 +59,17 @@ runs:
         id: install
         if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
         run: |
-          cd ${{ inputs.app-base-dir }}
+          cd app
           poetry install
           echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Build Code
-        working-directory: ${{ inputs.app-base-dir }}
         run: |
           echo "Not Implemented"
         shell: bash
 
       - name: Lint Code
-        working-directory: ${{ inputs.app-base-dir }}
         run: |
           echo "Not Implemented"
         shell: bash
