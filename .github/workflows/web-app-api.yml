@@ -91,7 +91,7 @@ jobs:
       - name: Run Build
         uses: tychodev321/workflow-templates/.github/actions/build-python@main
         with:
-          app-base-dir: app
+          app-base-dir: ${{ inputs.app-base-dir }}
           upload-test-results: ${{ github.event.inputs.upload-test-results }}
           run-bdd-test: ${{ github.event.inputs.run-bdd-test }}
           caching: 'true'
