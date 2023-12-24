@@ -59,7 +59,7 @@ runs:
         id: install
         if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
         run: |
-          cd app
+          cd ${{ inputs.app-base-dir }}
           poetry install
           echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
         shell: bash
