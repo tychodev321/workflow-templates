@@ -92,8 +92,8 @@ jobs:
         uses: tychodev321/workflow-templates/.github/actions/build-python@main
         with:
           app-base-dir: ${{ inputs.app-base-dir }}
-          upload-test-results: ${{ github.event.inputs.upload-test-results }}
-          run-bdd-test: ${{ github.event.inputs.run-bdd-test }}
+          upload-test-results: ${{ inputs.upload-test-results }}
+          run-bdd-test: ${{ inputs.run-bdd-test }}
           caching: 'true'
       - name: Set result output
         id: set-result
