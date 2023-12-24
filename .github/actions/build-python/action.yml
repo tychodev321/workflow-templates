@@ -59,7 +59,7 @@ runs:
 
       - name: Install Dependencies
         id: install
-        working-directory: app
+        working-directory: "app"
         if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
         run: |
           poetry install
