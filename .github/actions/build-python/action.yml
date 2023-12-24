@@ -49,6 +49,7 @@ runs:
         shell: bash
 
       - name: Cache Dependencies
+        working-directory: ${{ inputs.app-base-dir }}
         if: inputs.caching == 'true'
         id: cache
         uses: actions/cache@v3
@@ -58,6 +59,7 @@ runs:
 
       - name: Install Dependencies
         id: install
+        working-directory: ${{ inputs.app-base-dir }}
         if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
         run: |
           poetry install
@@ -65,27 +67,32 @@ runs:
         shell: bash
 
       - name: Build Code
+        working-directory: ${{ inputs.app-base-dir }}
         run: |
           echo "Not Implemented"
         shell: bash
 
       - name: Lint Code
+        working-directory: ${{ inputs.app-base-dir }}
         run: |
           echo "Not Implemented"
         shell: bash
 
       - name: Test Code
+        working-directory: ${{ inputs.app-base-dir }}
         run: |
           poetry run pytest ${{ inputs.pytest-test-opts }} ${{ inputs.pytest-cli-opts }} --ignore=tests/bdd --junitxml=tests/reports/pytests-unit.xml
         shell: bash
 
       - name: Test BDD Code
+        working-directory: ${{ inputs.app-base-dir }}
         if: inputs.run-bdd-test == 'true'
         run: |
           poetry run pytest ${{ inputs.pytest-test-opts }} ${{ inputs.pytest-cli-opts }} --ignore=tests/unit --junitxml=tests/reports/pytests-bdd.xml
         shell: bash
           
       - name: Generate Test Report
+        working-directory: ${{ inputs.app-base-dir }}
         uses: dorny/test-reporter@v1
         if: success() || failure()                # run this step even if previous step failed
         with:
@@ -94,6 +101,7 @@ runs:
           reporter: java-junit             
 
       - name: Upload Test Results
+        working-directory: ${{ inputs.app-base-dir }}
         uses: actions/upload-artifact@v3
         if: always()
         with:
