@@ -30,14 +30,3 @@ jobs:
           enable-tests: ${{ inputs.enable-tests }}
           upload-test-results: ${{ inputs.upload-test-results }}
           upload-module: ${{ inputs.upload-module }}
-      - name: checkout
-        uses: actions/checkout@v4
-      - name: Tag Version in Github
-        run: |
-          git --version
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git status
-          # git tag
-          # git describe
-        shell: bash
