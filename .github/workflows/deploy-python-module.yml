@@ -39,7 +39,6 @@ jobs:
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1
       - run: |
-          curl -sSL https://install.python-poetry.org | POETRY_HOME=/etc/poetry python3 -
           git config user.name github-actions
           git config user.email github-actions@github.com
           git status
