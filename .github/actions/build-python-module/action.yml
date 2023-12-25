@@ -36,7 +36,7 @@ runs:
     - name: Checkout Code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 2
+        fetch-depth: 5
 
     - name: Setup Build
       run: |
