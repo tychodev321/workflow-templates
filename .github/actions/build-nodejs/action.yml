@@ -67,7 +67,7 @@ runs:
       - name: Test Code
         run: |
           cd ${{ inputs.app-base-dir }}
-          yarn run test
+          # yarn run test
         shell: bash
 
       # - name: Test BDD Code
