@@ -89,9 +89,9 @@ runs:
             tests/reports/pytests-unit.xml
             tests/reports/pytests-bdd.xml
 
-      - name: Upload Module
-        if: inputs.module == 'true'
-        id: upload-module
-        run: |
-          poetry publish --repository ????
-        shell: bash
+      # - name: Upload Module
+      #   if: inputs.module == 'true'
+      #   id: upload-module
+      #   run: |
+      #     poetry publish --repository ????
+      #   shell: bash

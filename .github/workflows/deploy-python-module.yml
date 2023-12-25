@@ -22,5 +22,5 @@ jobs:
         uses: tychodev321/workflow-templates/.github/actions/build-python-module@main
         with:
           caching: 'true'
-          upload-test-results: ${{ github.event.inputs.upload-test-results }}
-          upload-module: ${{ github.event.inputs.upload-module }}
+          upload-test-results: ${{ inputs.upload-test-results }}
+          upload-module: ${{ inputs.upload-module }}
