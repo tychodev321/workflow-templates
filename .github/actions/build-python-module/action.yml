@@ -6,6 +6,10 @@ inputs:
     description: 'Whether to cache dependencies or not.'
     required: false
     default: 'true'
+  enable-tests:
+    description: 'Whether to run unit tests or not.'
+    required: false
+    default: 'true'
   upload-test-results:
     description: 'Whether to upload test results or not.'
     required: false
@@ -68,13 +72,14 @@ runs:
         shell: bash
 
       - name: Test Code
+        if: inputs.enable-tests == 'true'
         run: |
           poetry run pytest ${{ inputs.pytest-test-opts }} ${{ inputs.pytest-cli-opts }} --ignore=tests/bdd --junitxml=tests/reports/pytests-unit.xml
         shell: bash
 
       - name: Generate Test Report
         uses: dorny/test-reporter@v1
-        if: success() || failure()                # run this step even if previous step failed
+        if: inputs.enable-tests == 'true'                # run this step even if previous step failed
         with:
           name: PyTest Tests
           path: tests/reports/pytests-unit.xml
@@ -82,7 +87,7 @@ runs:
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v3
-        if: always()
+        if: inputs.enable-tests == 'true'
         with:
           name: Upload Test Results
           path: |

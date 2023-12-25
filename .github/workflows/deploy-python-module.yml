@@ -11,6 +11,11 @@ on:
         description: 'Whether to upload module or not.'
         required: false
         type: string
+      enable-tests:
+        description: 'Whether to run unit tests or not.'
+        required: false
+        default: 'true'
+        type: string
 
 jobs:
   deploy:
@@ -22,5 +27,6 @@ jobs:
         uses: tychodev321/workflow-templates/.github/actions/build-python-module@main
         with:
           caching: 'true'
+          enable-tests: ${{ inputs.enable-tests }}
           upload-test-results: ${{ inputs.upload-test-results }}
           upload-module: ${{ inputs.upload-module }}
