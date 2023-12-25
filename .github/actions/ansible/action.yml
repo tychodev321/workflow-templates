@@ -1,48 +1,48 @@
 name: Deploy Ansible
-description: 'Deploy Ansible'
+description: "Deploy Ansible"
 inputs:
   environment:
-    description: 'The environment the deployment is for.'
+    description: "The environment the deployment is for."
     required: false
-    default: 'acpt'
+    default: "acpt"
   region:
-    description: 'The region the deployment is for.'
+    description: "The region the deployment is for."
     required: false
-    default: 'us-east-1'
+    default: "us-east-1"
   deploy:
-    description: 'Whether to deploy or not.'
+    description: "Whether to deploy or not."
     required: false
-    default: 'true'
+    default: "true"
   infra-base-dir:
-    description: 'The Infra Base Directory.'
+    description: "The Infra Base Directory."
     required: false
-    default: '.'
+    default: "."
   playbook-file-name:
-    description: 'The Ansible Playbook to run.'
+    description: "The Ansible Playbook to run."
     required: true
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-      - name: Setup Deploy
-        run: |
-          cd ${{ inputs.infra-base-dir }}
-          export AWS_DEFAULT_REGION=${{ inputs.region }}
-          ansible --version
-          ansible-playbook --version
-        shell: bash
+    - name: Setup Deploy
+      run: |
+        cd ${{ inputs.infra-base-dir }}
+        export AWS_DEFAULT_REGION=${{ inputs.region }}
+        ansible --version
+        ansible-playbook --version
+      shell: bash
 
-      - name: Validate Infra
-        run: |
-          echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
-          ansible-lint ${{ inputs.playbook-file-name }}
-        shell: bash
+    - name: Validate Infra
+      run: |
+        echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+        ansible-lint ${{ inputs.playbook-file-name }}
+      shell: bash
 
-      - name: Deploy Infra
-        if: inputs.deploy == 'true'
-        run: |
-          echo "Deploying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
-          ansible-playbook ${{ inputs.playbook-file-name }}
-        shell: bash
+    - name: Deploy Infra
+      if: inputs.deploy == 'true'
+      run: |
+        echo "Deploying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+        ansible-playbook ${{ inputs.playbook-file-name }}
+      shell: bash

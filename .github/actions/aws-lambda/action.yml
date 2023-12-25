@@ -1,79 +1,79 @@
 name: Package Lambda
-description: 'Build Lambda'
+description: "Build Lambda"
 inputs:
   caching:
-    description: 'Whether to cache dependencies or not.'
+    description: "Whether to cache dependencies or not."
     required: false
-    default: 'true'
+    default: "true"
   app-base-dir:
-    description: 'The App Base Directory.'
+    description: "The App Base Directory."
     required: false
-    default: 'app'
+    default: "app"
 outputs:
   used-cache:
-    description: 'Whether the cache was used.'
+    description: "Whether the cache was used."
     value: ${{ steps.install.outputs.cache }}
   uploaded-test-results:
-    description: 'Whether the test results were uploaded.'
+    description: "Whether the test results were uploaded."
     value: ${{ steps.upload-results.outputs.uploaded }}
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        
-      - name: Setup Build
-        run: |
-          cd ${{ inputs.app-base-dir }}
-          python --version
-          python -m pip --version
-          poetry about
-          poetry config virtualenvs.create true
-          poetry config virtualenvs.in-project true
-        shell: bash
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-      - name: Cache Dependencies
-        if: inputs.caching == 'true'
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: deps-python-venv-${{ hashFiles('**/poetry.lock') }}
+    - name: Setup Build
+      run: |
+        cd ${{ inputs.app-base-dir }}
+        python --version
+        python -m pip --version
+        poetry about
+        poetry config virtualenvs.create true
+        poetry config virtualenvs.in-project true
+      shell: bash
 
-      - name: Install Dependencies
-        id: install
-        if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
-        run: |
-          poetry install
-          echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
-        shell: bash
+    - name: Cache Dependencies
+      if: inputs.caching == 'true'
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: .venv
+        key: deps-python-venv-${{ hashFiles('**/poetry.lock') }}
 
-      - name: Package Lambda Code
-        run: |
-          zip -x '*.venv*' -x '*.pyc*'  -r -q ../lambda.zip .
-          cd ..
-        shell: bash
+    - name: Install Dependencies
+      id: install
+      if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
+      run: |
+        poetry install
+        echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
+      shell: bash
 
-      - name: Package Lambda Layer
-        run: |
-          mkdir -p python
-          cp -rp .venv/lib/python3.10/site-packages/* python
-          rm -rf python/wheel*
-          rm -rf python/easy-install*
-          rm -rf python/setuptools*
-          rm -rf python/virtualenv*
-          rm -rf python/pip*
-          rm -rf python/bin*
-          rm -rf python/include*
-          rm -rf python/*.dist-info
-          zip -r9 -q ../layer.zip python
-          cd ..
-        shell: bash
+    - name: Package Lambda Code
+      run: |
+        zip -x '*.venv*' -x '*.pyc*'  -r -q ../lambda.zip .
+        cd ..
+      shell: bash
 
-      - name: Upload Packaged Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: lambda-files
-          path: |
-            lambda.zip
-            layer.zip
+    - name: Package Lambda Layer
+      run: |
+        mkdir -p python
+        cp -rp .venv/lib/python3.10/site-packages/* python
+        rm -rf python/wheel*
+        rm -rf python/easy-install*
+        rm -rf python/setuptools*
+        rm -rf python/virtualenv*
+        rm -rf python/pip*
+        rm -rf python/bin*
+        rm -rf python/include*
+        rm -rf python/*.dist-info
+        zip -r9 -q ../layer.zip python
+        cd ..
+      shell: bash
+
+    - name: Upload Packaged Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: lambda-files
+        path: |
+          lambda.zip
+          layer.zip

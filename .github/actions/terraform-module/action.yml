@@ -1,35 +1,35 @@
 # TODO: Implement this Custom Action
 name: Deploy Terraform Module
-description: 'Deploy Terraform Module'
+description: "Deploy Terraform Module"
 inputs:
   deploy:
-    description: 'Whether to deploy or not.'
+    description: "Whether to deploy or not."
     required: false
-    default: 'true'
+    default: "true"
   infra-base-dir:
-    description: 'The Infra Base Directory.'
+    description: "The Infra Base Directory."
     required: false
-    default: '.'
+    default: "."
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-      - name: Setup Deploy
-        run: |
-          cd ${{ inputs.infra-base-dir }}
-        shell: bash
+    - name: Setup Deploy
+      run: |
+        cd ${{ inputs.infra-base-dir }}
+      shell: bash
 
-      - name: Install Dependencies
-        id: install
-        run: |
-          # Nothing else needed for Terraform Cloud
-          terraform init
-        shell: bash
+    - name: Install Dependencies
+      id: install
+      run: |
+        # Nothing else needed for Terraform Cloud
+        terraform init
+      shell: bash
 
-      - name: Validate Infra
-        run: |
-          echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
-          terraform validate
-        shell: bash
+    - name: Validate Infra
+      run: |
+        echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+        terraform validate
+      shell: bash

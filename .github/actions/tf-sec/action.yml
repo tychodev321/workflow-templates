@@ -4,13 +4,13 @@
 # documentation.
 
 name: TFSec Terraform scan
-description: 'TFSec Terraform scan'
+description: "TFSec Terraform scan"
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Checkout Code
-      uses: actions/checkout@v3
-      
+      uses: actions/checkout@v4
+
     - name: Run Scan
       uses: aquasecurity/tfsec-sarif-action@9a83b5c3524f825c020e356335855741fd02745f
       with:

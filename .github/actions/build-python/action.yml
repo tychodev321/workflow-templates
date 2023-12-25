@@ -1,108 +1,108 @@
 name: Build Python
-description: 'Build Python'
+description: "Build Python"
 inputs:
   caching:
-    description: 'Whether to cache dependencies or not.'
+    description: "Whether to cache dependencies or not."
     required: false
-    default: 'true'
+    default: "true"
   upload-test-results:
-    description: 'Whether to upload test results or not.'
+    description: "Whether to upload test results or not."
     required: false
-    default: 'false'
+    default: "false"
   run-bdd-test:
-    description: 'Whether to run BDD Tests or not.'
+    description: "Whether to run BDD Tests or not."
     required: false
-    default: 'false'
+    default: "false"
   app-base-dir:
-    description: 'The App Base Directory.'
+    description: "The App Base Directory."
     required: false
-    default: 'app'
+    default: "app"
   pytest-test-opts:
-    description: 'PyTest Test Options.'
+    description: "PyTest Test Options."
     required: false
-    default: 'tests/'
+    default: "tests/"
   pytest-cli-opts:
-    description: 'PyTest CLI Options.'
+    description: "PyTest CLI Options."
     required: false
-    default: ''
+    default: ""
 outputs:
   used-cache:
-    description: 'Whether the cache was used.'
+    description: "Whether the cache was used."
     value: ${{ steps.install.outputs.cache }}
   uploaded-test-results:
-    description: 'Whether the test results were uploaded.'
+    description: "Whether the test results were uploaded."
     value: ${{ steps.upload-results.outputs.uploaded }}
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        
-      - name: Setup Build
-        run: |
-          cd ${{ inputs.app-base-dir }}
-          python --version
-          python -m pip --version
-          poetry about
-          poetry config virtualenvs.create true
-          poetry config virtualenvs.in-project true
-        shell: bash
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-      - name: Cache Dependencies
-        if: inputs.caching == 'true'
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ inputs.app-base-dir }}/.venv
-          key: deps-python-venv-${{ hashFiles('**/poetry.lock') }}
+    - name: Setup Build
+      run: |
+        cd ${{ inputs.app-base-dir }}
+        python --version
+        python -m pip --version
+        poetry about
+        poetry config virtualenvs.create true
+        poetry config virtualenvs.in-project true
+      shell: bash
 
-      - name: Install Dependencies
-        id: install
-        if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
-        run: |
-          cd ${{ inputs.app-base-dir }}
-          poetry install
-          echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
-        shell: bash
+    - name: Cache Dependencies
+      if: inputs.caching == 'true'
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ inputs.app-base-dir }}/.venv
+        key: deps-python-venv-${{ hashFiles('**/poetry.lock') }}
 
-      - name: Build Code
-        run: |
-          cd ${{ inputs.app-base-dir }}
-          echo "Not Implemented"
-        shell: bash
+    - name: Install Dependencies
+      id: install
+      if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
+      run: |
+        cd ${{ inputs.app-base-dir }}
+        poetry install
+        echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
+      shell: bash
 
-      - name: Lint Code
-        run: |
-          cd ${{ inputs.app-base-dir }}
-          echo "Not Implemented"
-        shell: bash
+    - name: Build Code
+      run: |
+        cd ${{ inputs.app-base-dir }}
+        echo "Not Implemented"
+      shell: bash
 
-      - name: Test Code
-        run: |
-          cd ${{ inputs.app-base-dir }}
-          poetry run pytest ${{ inputs.pytest-test-opts }} ${{ inputs.pytest-cli-opts }} --ignore=tests/bdd --junitxml=tests/reports/pytests-unit.xml
-        shell: bash
+    - name: Lint Code
+      run: |
+        cd ${{ inputs.app-base-dir }}
+        echo "Not Implemented"
+      shell: bash
 
-      # - name: Test BDD Code
-      #   if: inputs.run-bdd-test == 'true'
-      #   run: |
-      #     cd ${{ inputs.app-base-dir }}
-      #     poetry run pytest ${{ inputs.pytest-test-opts }} ${{ inputs.pytest-cli-opts }} --ignore=tests/unit --junitxml=tests/reports/pytests-bdd.xml
-      #   shell: bash
-          
-      # - name: Generate Test Report
-      #   uses: dorny/test-reporter@v1
-      #   if: success() || failure()                # run this step even if previous step failed
-      #   with:
-      #     name: PyTest Tests
-      #     path: ${{ inputs.app-base-dir }}/tests/reports/pytests-unit.xml
-      #     reporter: java-junit             
+    - name: Test Code
+      run: |
+        cd ${{ inputs.app-base-dir }}
+        poetry run pytest ${{ inputs.pytest-test-opts }} ${{ inputs.pytest-cli-opts }} --ignore=tests/bdd --junitxml=tests/reports/pytests-unit.xml
+      shell: bash
 
-      # - name: Upload Test Results
-      #   uses: actions/upload-artifact@v3
-      #   if: always()
-      #   with:
-      #     name: Upload Test Results
-      #     path: |
-      #       ${{ inputs.app-base-dir }}/tests/reports/pytests-unit.xml
-      #       ${{ inputs.app-base-dir }}/tests/reports/pytests-bdd.xml
+    # - name: Test BDD Code
+    #   if: inputs.run-bdd-test == 'true'
+    #   run: |
+    #     cd ${{ inputs.app-base-dir }}
+    #     poetry run pytest ${{ inputs.pytest-test-opts }} ${{ inputs.pytest-cli-opts }} --ignore=tests/unit --junitxml=tests/reports/pytests-bdd.xml
+    #   shell: bash
+
+    # - name: Generate Test Report
+    #   uses: dorny/test-reporter@v1
+    #   if: success() || failure()                # run this step even if previous step failed
+    #   with:
+    #     name: PyTest Tests
+    #     path: ${{ inputs.app-base-dir }}/tests/reports/pytests-unit.xml
+    #     reporter: java-junit
+
+    # - name: Upload Test Results
+    #   uses: actions/upload-artifact@v3
+    #   if: always()
+    #   with:
+    #     name: Upload Test Results
+    #     path: |
+    #       ${{ inputs.app-base-dir }}/tests/reports/pytests-unit.xml
+    #       ${{ inputs.app-base-dir }}/tests/reports/pytests-bdd.xml

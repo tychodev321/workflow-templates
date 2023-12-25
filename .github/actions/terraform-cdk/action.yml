@@ -1,79 +1,79 @@
 name: Deploy Terraform CDK
-description: 'Deploy Terraform CDK'
+description: "Deploy Terraform CDK"
 inputs:
   caching:
-    description: 'Whether to cache dependencies or not.'
+    description: "Whether to cache dependencies or not."
     required: false
-    default: 'true'
+    default: "true"
   environment:
-    description: 'The environment the deployment is for.'
+    description: "The environment the deployment is for."
     required: false
-    default: 'acpt'
+    default: "acpt"
   region:
-    description: 'The region the deployment is for.'
+    description: "The region the deployment is for."
     required: false
-    default: 'us-east-1'
+    default: "us-east-1"
   deploy:
-    description: 'Whether to deploy or not.'
+    description: "Whether to deploy or not."
     required: false
-    default: 'true'
+    default: "true"
   destroy:
-    description: 'Whether to destroy or not.'
+    description: "Whether to destroy or not."
     required: false
-    default: 'false'
+    default: "false"
   infra-base-dir:
-    description: 'The Infra Base Directory.'
+    description: "The Infra Base Directory."
     required: false
-    default: '.'
+    default: "."
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-      - name: Setup Deploy
-        run: |
-          cd ${{ inputs.infra-base-dir }}
-          echo "Configuring Python..."
-          python --version
-          python -m pip --version
-          poetry about
-          poetry config virtualenvs.create true
-          poetry config virtualenvs.in-project true
-        shell: bash
+    - name: Setup Deploy
+      run: |
+        cd ${{ inputs.infra-base-dir }}
+        echo "Configuring Python..."
+        python --version
+        python -m pip --version
+        poetry about
+        poetry config virtualenvs.create true
+        poetry config virtualenvs.in-project true
+      shell: bash
 
-      - name: Cache Dependencies
-        if: inputs.caching == 'true'
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: deps-python-venv-${{ hashFiles('**/poetry.lock') }}
+    - name: Cache Dependencies
+      if: inputs.caching == 'true'
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: .venv
+        key: deps-python-venv-${{ hashFiles('**/poetry.lock') }}
 
-      - name: Install Dependencies
-        id: install
-        if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
-        run: |
-          poetry install
-          echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
-        shell: bash
+    - name: Install Dependencies
+      id: install
+      if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
+      run: |
+        poetry install
+        echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
+      shell: bash
 
-      - name: Validate Infra
-        run: |
-          echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
-          poetry run cdktf diff
-        shell: bash
+    - name: Validate Infra
+      run: |
+        echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+        poetry run cdktf diff
+      shell: bash
 
-      - name: Deploy Infra
-        if: inputs.deploy == 'true'
-        run: |
-          echo "Deploying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
-          poetry run cdktf deploy --auto-approve
-        shell: bash
+    - name: Deploy Infra
+      if: inputs.deploy == 'true'
+      run: |
+        echo "Deploying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+        poetry run cdktf deploy --auto-approve
+      shell: bash
 
-      - name: Destroy Infra
-        if: inputs.destroy == 'true'
-        run: |
-          echo "Destroying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
-          poetry run cdktf destroy --auto-approve
-        shell: bash
+    - name: Destroy Infra
+      if: inputs.destroy == 'true'
+      run: |
+        echo "Destroying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+        poetry run cdktf destroy --auto-approve
+      shell: bash

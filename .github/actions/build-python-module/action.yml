@@ -1,115 +1,112 @@
 # TODO: Implement this Custom Action
 name: Build Python Module
-description: 'Build Python Module'
+description: "Build Python Module"
 inputs:
   caching:
-    description: 'Whether to cache dependencies or not.'
+    description: "Whether to cache dependencies or not."
     required: false
-    default: 'true'
+    default: "true"
   enable-tests:
-    description: 'Whether to run unit tests or not.'
+    description: "Whether to run unit tests or not."
     required: false
-    default: 'true'
+    default: "true"
   upload-test-results:
-    description: 'Whether to upload test results or not.'
+    description: "Whether to upload test results or not."
     required: false
-    default: 'false'
+    default: "false"
   upload-module:
-    description: 'Whether to upload module or not.'
+    description: "Whether to upload module or not."
     required: false
-    default: 'false'
+    default: "false"
   pytest-test-opts:
-    description: 'PyTest Test Options.'
+    description: "PyTest Test Options."
     required: false
-    default: 'tests/'
+    default: "tests/"
   pytest-cli-opts:
-    description: 'PyTest CLI Options.'
+    description: "PyTest CLI Options."
     required: false
-    default: ''
+    default: ""
 outputs:
   used-cache:
-    description: 'Whether the cache was used.'
+    description: "Whether the cache was used."
     value: ${{ steps.install.outputs.cache }}
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: '0'
-        
-      - name: Setup Build
-        run: |
-          python --version
-          python -m pip --version
-          poetry about
-          poetry config virtualenvs.create true
-          poetry config virtualenvs.in-project true
-        shell: bash
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-      - name: Cache Dependencies
-        if: inputs.caching == 'true'
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: deps-python-venv-${{ hashFiles('**/poetry.lock') }}
+    - name: Setup Build
+      run: |
+        python --version
+        python -m pip --version
+        poetry about
+        poetry config virtualenvs.create true
+        poetry config virtualenvs.in-project true
+      shell: bash
 
-      - name: Install Dependencies
-        id: install
-        if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
-        run: |
-          poetry install
-          echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
-        shell: bash
+    - name: Cache Dependencies
+      if: inputs.caching == 'true'
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: .venv
+        key: deps-python-venv-${{ hashFiles('**/poetry.lock') }}
 
-      - name: Build Code
-        run: |
-          poetry build
-        shell: bash
+    - name: Install Dependencies
+      id: install
+      if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
+      run: |
+        poetry install
+        echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
+      shell: bash
 
-      - name: Lint Code
-        run: |
-          echo "Not Implemented"
-        shell: bash
+    - name: Build Code
+      run: |
+        poetry build
+      shell: bash
 
-      - name: Test Code
-        if: inputs.enable-tests == 'true'
-        run: |
-          poetry run pytest ${{ inputs.pytest-test-opts }} ${{ inputs.pytest-cli-opts }} --ignore=tests/bdd --junitxml=tests/reports/pytests-unit.xml
-        shell: bash
+    - name: Lint Code
+      run: |
+        echo "Not Implemented"
+      shell: bash
 
-      - name: Generate Test Report
-        uses: dorny/test-reporter@v1
-        if: inputs.enable-tests == 'true'                # run this step even if previous step failed
-        with:
-          name: PyTest Tests
-          path: tests/reports/pytests-unit.xml
-          reporter: java-junit             
+    - name: Test Code
+      if: inputs.enable-tests == 'true'
+      run: |
+        poetry run pytest ${{ inputs.pytest-test-opts }} ${{ inputs.pytest-cli-opts }} --ignore=tests/bdd --junitxml=tests/reports/pytests-unit.xml
+      shell: bash
 
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v3
-        if: inputs.enable-tests == 'true'
-        with:
-          name: Upload Test Results
-          path: |
-            tests/reports/pytests-unit.xml
-            tests/reports/pytests-bdd.xml
+    - name: Generate Test Report
+      uses: dorny/test-reporter@v1
+      if: inputs.enable-tests == 'true' # run this step even if previous step failed
+      with:
+        name: PyTest Tests
+        path: tests/reports/pytests-unit.xml
+        reporter: java-junit
 
-      - name: Tag Version in Github
-        run: |
-          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
-          git --version
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>"
-          git status
-          # git tag
-          # git describe
-        shell: bash
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v3
+      if: inputs.enable-tests == 'true'
+      with:
+        name: Upload Test Results
+        path: |
+          tests/reports/pytests-unit.xml
+          tests/reports/pytests-bdd.xml
 
-      # - name: Upload Module
-      #   if: inputs.module == 'true'
-      #   id: upload-module
-      #   run: |
-      #     poetry publish --repository ????
-      #   shell: bash
+    - name: Tag Version in Github
+      run: |
+        git --version
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git status
+        # git tag
+        # git describe
+      shell: bash
+
+    # - name: Upload Module
+    #   if: inputs.module == 'true'
+    #   id: upload-module
+    #   run: |
+    #     poetry publish --repository ????
+    #   shell: bash
