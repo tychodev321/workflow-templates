@@ -94,16 +94,6 @@ runs:
           tests/reports/pytests-unit.xml
           tests/reports/pytests-bdd.xml
 
-    - uses: actions/checkout@v4
-    - run: |
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        git status
-        # git add .
-        # git commit -m "generated"
-        # git push
-      shell: bash
-
     # - name: Upload Module
     #   if: inputs.module == 'true'
     #   id: upload-module

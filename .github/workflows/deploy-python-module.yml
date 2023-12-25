@@ -32,6 +32,8 @@ jobs:
           upload-module: ${{ inputs.upload-module }}
   deploy:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/tychodev321/ubuntu-python:main
     needs: [build]
     steps:
       - uses: actions/checkout@v4
