@@ -43,7 +43,7 @@ jobs:
           git config user.email github-actions@github.com
           git status
           poetry version -s
-          git commit -m v$(poetry version -s)
+          # git commit -m v$(poetry version -s)
           # git tag v$(poetry version -s)
           # Push the version information
           # git push origin main # Or your current branch
