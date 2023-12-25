@@ -32,6 +32,7 @@ jobs:
           upload-module: ${{ inputs.upload-module }}
   deploy:
     runs-on: ubuntu-latest
+    needs: [build]
     steps:
       - uses: actions/checkout@v4
       - run: |
