@@ -94,17 +94,6 @@ runs:
             tests/reports/pytests-unit.xml
             tests/reports/pytests-bdd.xml
 
-      - name: git
-        run: |
-          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
-          git --version
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>"
-          git status
-          # git tag
-          # git describe
-        shell: bash
-
       # - name: Upload Module
       #   if: inputs.module == 'true'
       #   id: upload-module
