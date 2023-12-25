@@ -98,5 +98,5 @@ runs:
     #   if: inputs.module == 'true'
     #   id: upload-module
     #   run: |
-    #     poetry publish --repository ????
+    #     poetry publish --repository artifactory
     #   shell: bash
