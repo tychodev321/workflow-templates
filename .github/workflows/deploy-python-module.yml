@@ -18,7 +18,7 @@ on:
         type: string
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/tychodev321/ubuntu-python:main
@@ -30,3 +30,15 @@ jobs:
           enable-tests: ${{ inputs.enable-tests }}
           upload-test-results: ${{ inputs.upload-test-results }}
           upload-module: ${{ inputs.upload-module }}
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git status
+          # git add .
+          # git commit -m "generated"
+          # git push
+        shell: bash
