@@ -35,6 +35,8 @@ runs:
   steps:
     - name: Checkout Code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
 
     - name: Setup Build
       run: |
