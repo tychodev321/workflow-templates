@@ -41,7 +41,7 @@ runs:
     - name: Give GitHub Actions access to tychodev321/tychodev-commons
       uses: webfactory/ssh-agent@v0.8.0
       with:
-        ssh-private-key: "${{ secrets.TYCHODEV_COMMONS_DEPLOY_KEY }}"
+        ssh-private-key: ${{ secrets.TYCHODEV_COMMONS_DEPLOY_KEY }}
 
     - name: Setup Build
       run: |
