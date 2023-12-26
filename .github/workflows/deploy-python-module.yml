@@ -47,5 +47,5 @@ jobs:
           git tag v$(poetry version -s)
           # Push the version information
           git push origin main
-          # git push origin --tags # Push the tags
+          git push origin --tags # Push the tags
         shell: bash
