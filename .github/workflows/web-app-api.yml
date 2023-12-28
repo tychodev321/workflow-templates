@@ -91,7 +91,8 @@ jobs:
       - name: Setup Github Actions Deploy Keys
         uses: webfactory/ssh-agent@v0.8.0
         with:
-          ssh-private-key: ${{ secrets.TYCHODEV_COMMONS_DEPLOY_KEY }}
+          ssh-private-key:  |
+            ${{ secrets.TYCHODEV_COMMONS_DEPLOY_KEY }}
       - name: Run Build
         uses: tychodev321/workflow-templates/.github/actions/build-python@main
         with:
