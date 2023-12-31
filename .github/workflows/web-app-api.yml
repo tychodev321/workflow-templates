@@ -100,6 +100,7 @@ jobs:
           upload-test-results: ${{ inputs.upload-test-results }}
           run-bdd-test: ${{ inputs.run-bdd-test }}
           caching: 'true'
+          tycho-commons-deploy-key: ${{ secrets.TYCHODEV_COMMONS_DEPLOY_KEY }}
       - name: Set result output
         id: set-result
         run: echo "step-result=success" >> $GITHUB_OUTPUT

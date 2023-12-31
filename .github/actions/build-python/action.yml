@@ -25,6 +25,9 @@ inputs:
     description: "PyTest CLI Options."
     required: false
     default: ""
+  tycho-commons-deploy-key:
+    description: "Tycho Dev Commons GHA Deploy Key"
+    required: true
 outputs:
   used-cache:
     description: "Whether the cache was used."
@@ -37,6 +40,12 @@ runs:
   steps:
     - name: Checkout Code
       uses: actions/checkout@v4
+      
+    - name: Setup Github Actions Deploy Keys
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key:  |
+          ${{ inputs.tycho-commons-deploy-key }}
 
     - name: Setup Build
       run: |
