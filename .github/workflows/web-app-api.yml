@@ -76,6 +76,15 @@ jobs:
   #       uses: tychodev321/workflow-templates/.github/actions/codeql@main
   #       with:
   #         language: ${{ matrix.language }}
+  test-ssh:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git clone git@github.com:tychodev321/tychodev-commons.git
+        shell: bash
   build:
     # needs: [sast-codeql]
     continue-on-error: true # TODO: Remove this when this is fixed
