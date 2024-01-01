@@ -79,6 +79,11 @@ jobs:
   test-ssh:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Github Actions Deploy Keys
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key:  |
+            ${{ secrets.TYCHODEV_COMMONS_DEPLOY_KEY}}
       - run: |
           git clone git@github.com:tychodev321/tychodev-commons.git
         shell: bash
