@@ -78,6 +78,8 @@ jobs:
   #         language: ${{ matrix.language }}
   test-ssh:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/tychodev321/ubuntu-python:main
     steps:
       - name: Setup Github Actions Deploy Keys
         uses: webfactory/ssh-agent@v0.8.0
