@@ -86,6 +86,7 @@ jobs:
             ${{ secrets.TYCHODEV_COMMONS_DEPLOY_KEY}}
       - run: |
           git clone git@github.com:tychodev321/tychodev-commons.git
+          ls -ltr
         shell: bash
   build:
     # needs: [sast-codeql]
