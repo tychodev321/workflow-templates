@@ -82,7 +82,7 @@ jobs:
       image: ghcr.io/tychodev321/ubuntu-python:main
     steps:
       - name: Setup Github Actions Deploy Keys
-        uses: webfactory/ssh-agent@v0.8.0
+        uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key:  |
             ${{ secrets.TYCHODEV_COMMONS_DEPLOY_KEY}}
