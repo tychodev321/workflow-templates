@@ -76,20 +76,20 @@ jobs:
   #       uses: tychodev321/workflow-templates/.github/actions/codeql@main
   #       with:
   #         language: ${{ matrix.language }}
-  test-ssh:
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/tychodev321/ubuntu-python:main
-    steps:
-      - name: Setup Github Actions Deploy Keys
-        uses: webfactory/ssh-agent@v0.8.0
-        with:
-          ssh-private-key:  |
-            ${{ secrets.TYCHODEV_COMMONS_DEPLOY_KEY}}
-      - run: |
-          git clone git@github.com:tychodev321/tychodev-commons.git
-          ls -ltr
-        shell: bash
+  # test-ssh:
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: ghcr.io/tychodev321/ubuntu-python:main
+  #   steps:
+  #     - name: Setup Github Actions Deploy Keys
+  #       uses: webfactory/ssh-agent@v0.8.0
+  #       with:
+  #         ssh-private-key:  |
+  #           ${{ secrets.TYCHODEV_COMMONS_DEPLOY_KEY}}
+  #     - run: |
+  #         git clone git@github.com:tychodev321/tychodev-commons.git
+  #         ls -ltr
+  #       shell: bash
   build:
     # needs: [sast-codeql]
     continue-on-error: true # TODO: Remove this when this is fixed
@@ -106,7 +106,7 @@ jobs:
         uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key:  |
-            ${{ secrets.TYCHODEV_COMMONS_DEPLOY_KEY }}
+            ${{ secrets.TYCHODEV_COMMONS_DEPLOY_KEY}}
       - name: Run Build
         uses: tychodev321/workflow-templates/.github/actions/build-python@main
         with:
@@ -114,7 +114,6 @@ jobs:
           upload-test-results: ${{ inputs.upload-test-results }}
           run-bdd-test: ${{ inputs.run-bdd-test }}
           caching: 'true'
-          tycho-commons-deploy-key: ${{ secrets.TYCHODEV_COMMONS_DEPLOY_KEY }}
       - name: Set result output
         id: set-result
         run: echo "step-result=success" >> $GITHUB_OUTPUT
