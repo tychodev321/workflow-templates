@@ -39,6 +39,11 @@ jobs:
         environment: ${{ fromJson(inputs.environments) }}
         region: ${{ fromJson(inputs.regions) }}
     steps:
+      - name: Setup Github Actions Deploy Keys
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key:  |
+            ${{ secrets.TYCHODEV_TERRAFORM_CDK_COMMONS_DEPLOY_KEY }}
       - name: Deploy
         uses: tychodev321/workflow-templates/.github/actions/terraform-cdk@main
         with:
@@ -58,6 +63,11 @@ jobs:
         environment: ${{ fromJson(inputs.environments) }}
         region: ${{ fromJson(inputs.regions) }}
     steps:
+      - name: Setup Github Actions Deploy Keys
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key:  |
+            ${{ secrets.TYCHODEV_TERRAFORM_CDK_COMMONS_DEPLOY_KEY }}
       - name: Destroy
         uses: tychodev321/workflow-templates/.github/actions/terraform-cdk@main
         with:
