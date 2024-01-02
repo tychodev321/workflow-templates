@@ -76,20 +76,6 @@ jobs:
   #       uses: tychodev321/workflow-templates/.github/actions/codeql@main
   #       with:
   #         language: ${{ matrix.language }}
-  # test-ssh:
-  #   runs-on: ubuntu-latest
-  #   container:
-  #     image: ghcr.io/tychodev321/ubuntu-python:main
-  #   steps:
-  #     - name: Setup Github Actions Deploy Keys
-  #       uses: webfactory/ssh-agent@v0.8.0
-  #       with:
-  #         ssh-private-key:  |
-  #           ${{ secrets.TYCHODEV_COMMONS_DEPLOY_KEY}}
-  #     - run: |
-  #         git clone git@github.com:tychodev321/tychodev-commons.git
-  #         ls -ltr
-  #       shell: bash
   build:
     # needs: [sast-codeql]
     continue-on-error: true # TODO: Remove this when this is fixed
@@ -107,6 +93,7 @@ jobs:
         with:
           ssh-private-key:  |
             ${{ secrets.TYCHODEV_COMMONS_DEPLOY_KEY}}
+            ${{ secrets.TYCHODEV_PULUMI_COMMONS_DEPLOY_KEY }}
       - name: Run Build
         uses: tychodev321/workflow-templates/.github/actions/build-python@main
         with:

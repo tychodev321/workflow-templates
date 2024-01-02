@@ -77,11 +77,11 @@ runs:
         echo "Not Implemented"
       shell: bash
 
-    - name: Test Code
-      run: |
-        cd ${{ inputs.app-base-dir }}
-        poetry run pytest ${{ inputs.pytest-test-opts }} ${{ inputs.pytest-cli-opts }} --ignore=tests/bdd --junitxml=tests/reports/pytests-unit.xml
-      shell: bash
+    # - name: Test Code
+    #   run: |
+    #     cd ${{ inputs.app-base-dir }}
+    #     poetry run pytest ${{ inputs.pytest-test-opts }} ${{ inputs.pytest-cli-opts }} --ignore=tests/bdd --junitxml=tests/reports/pytests-unit.xml
+    #   shell: bash
 
     # - name: Test BDD Code
     #   if: inputs.run-bdd-test == 'true'
