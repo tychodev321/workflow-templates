@@ -58,13 +58,14 @@ runs:
       id: cache
       uses: actions/cache@v3
       with:
-        path: .venv
+        path: ${{ inputs.infra-base-dir }}/.venv
         key: deps-python-venv-${{ hashFiles('**/poetry.lock') }}
 
     - name: Install Dependencies
       id: install
       if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
       run: |
+        cd ${{ inputs.app-base-dir }}
         poetry install
         echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
       shell: bash
@@ -72,6 +73,7 @@ runs:
     - name: Validate Infra
       run: |
         echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+        cd ${{ inputs.app-base-dir }}
         poetry run pulumi preview --save-plan=${{ inputs.environment }}-${{ inputs.region }}-plan.json
       shell: bash
 
@@ -79,6 +81,7 @@ runs:
       if: inputs.deploy == 'true'
       run: |
         echo "Deploying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+        cd ${{ inputs.app-base-dir }}
         poetry run pulumi up --yes
         # poetry run pulumi up --yes --plan=${{ inputs.environment }}-${{ inputs.region }}-plan.json
       shell: bash
@@ -87,5 +90,6 @@ runs:
       if: inputs.destroy == 'true'
       run: |
         echo "Destroying Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
+        cd ${{ inputs.app-base-dir }}
         poetry run pulumi destroy --yes
       shell: bash
