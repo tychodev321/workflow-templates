@@ -43,7 +43,7 @@ runs:
         pulumi login
         # pulumi org set-default tychodev-org
         echo "Initializing Pulumi Stack for ${{ inputs.environment }} ${{ inputs.region }}..."
-        export STACK_NAME="${{ inputs.environment }}-${{ inputs.region }}"
+        export STACK_NAME=tychodev/"${{ inputs.environment }}-${{ inputs.region }}"
         pulumi stack select $STACK_NAME --create
 
         echo "Configuring Python..."
