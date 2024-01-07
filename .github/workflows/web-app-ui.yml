@@ -108,30 +108,54 @@ jobs:
       - name: Build Image
         run: |
           echo "Bulding Image..."
-  deploy: # TODO: Integrate with Pulumi Custom Action
+  deploy:
     if: inputs.deploy == 'true'
     needs: [build_image]
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/tychodev321/ubuntu-pulumi:main
     strategy:
       matrix:
         environment: ${{ fromJson(inputs.environments) }}
         region: ${{ fromJson(inputs.regions) }}
     steps:
+      - name: Setup Github Actions Deploy Keys
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key:  |
+            ${{ secrets.TYCHODEV_PULUMI_COMMONS_DEPLOY_KEY }}
       - name: Deploy
-        run: |
-          echo "Deploying..."
-          echo "${{ matrix.environment }}"
-          echo "${{ matrix.region }}"
+        uses: tychodev321/workflow-templates/.github/actions/pulumi@main
+        with:
+          access-token: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          caching: 'true'
+          environment: ${{ matrix.environment }}
+          region: ${{ matrix.region }}
+          infra-base-dir: ${{ inputs.infra-base-dir }}
+          deploy: ${{ inputs.deploy }}
+          destroy: ${{ inputs.destroy }}
   destroy: # TODO: Integrate with Pulumi Custom Action
     if: inputs.destroy == 'true'
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/tychodev321/ubuntu-pulumi:main
     strategy:
       matrix:
         environment: ${{ fromJson(inputs.environments) }}
         region: ${{ fromJson(inputs.regions) }}
     steps:
+      - name: Setup Github Actions Deploy Keys
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key:  |
+            ${{ secrets.TYCHODEV_PULUMI_COMMONS_DEPLOY_KEY }}
       - name: Destroy
-        run: |
-          echo "Destroying..."
-          echo "${{ matrix.environment }}"
-          echo "${{ matrix.region }}"
+        uses: tychodev321/workflow-templates/.github/actions/pulumi@main
+        with:
+          access-token: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          caching: 'true'
+          environment: ${{ matrix.environment }}
+          region: ${{ matrix.region }}
+          infra-base-dir: ${{ inputs.infra-base-dir }}
+          deploy: ${{ inputs.deploy }}
+          destroy: ${{ inputs.destroy }}
