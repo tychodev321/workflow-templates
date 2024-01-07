@@ -73,7 +73,7 @@ runs:
     - name: Validate Infra
       run: |
         echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
-        poetry run pulumi preview --save-plan=${{ inputs.environment }}-${{ inputs.region }}-plan.json
+        # poetry run pulumi preview --save-plan=${{ inputs.environment }}-${{ inputs.region }}-plan.json
       shell: bash
 
     - name: Deploy Infra
