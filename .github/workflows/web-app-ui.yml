@@ -134,7 +134,7 @@ jobs:
           infra-base-dir: ${{ inputs.infra-base-dir }}
           deploy: ${{ inputs.deploy }}
           destroy: ${{ inputs.destroy }}
-  destroy: # TODO: Integrate with Pulumi Custom Action
+  destroy:
     if: inputs.destroy == 'true'
     runs-on: ubuntu-latest
     container:
