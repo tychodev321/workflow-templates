@@ -42,6 +42,7 @@ runs:
         export AWS_REGION=${{ inputs.region }}
         pulumi login
         # pulumi org set-default tychodev-org
+        pulumi config set aws:skipMetadataApiCheck false
         echo "Initializing Pulumi Stack for ${{ inputs.environment }} ${{ inputs.region }}..."
         export STACK_NAME=tychodev/"${{ inputs.environment }}-${{ inputs.region }}"
         pulumi stack select $STACK_NAME --create
@@ -73,7 +74,7 @@ runs:
     - name: Validate Infra
       run: |
         echo "Validating Infrastructure for ${{ inputs.environment }} ${{ inputs.region }}..."
-        # poetry run pulumi preview --save-plan=${{ inputs.environment }}-${{ inputs.region }}-plan.json
+        poetry run pulumi preview --save-plan=${{ inputs.environment }}-${{ inputs.region }}-plan.json
       shell: bash
 
     - name: Deploy Infra
