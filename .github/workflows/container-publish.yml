@@ -1,10 +1,6 @@
 name: Container Build & Publish
 on:
   workflow_call:
-    outputs:
-      result:
-        description: The result of the deployment operation
-        value: ${{ jobs.build.outputs.outcome }}
 
 env:
   # Use docker.io for Docker Hub if empty
