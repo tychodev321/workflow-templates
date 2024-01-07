@@ -47,6 +47,7 @@ jobs:
       - name: Deploy
         uses: tychodev321/workflow-templates/.github/actions/pulumi@main
         with:
+          access-token: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           caching: 'true'
           environment: ${{ matrix.environment }}
           region: ${{ matrix.region }}
@@ -71,9 +72,11 @@ jobs:
       - name: Destroy
         uses: tychodev321/workflow-templates/.github/actions/pulumi@main
         with:
+          access-token: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           caching: 'true'
           environment: ${{ matrix.environment }}
           region: ${{ matrix.region }}
           infra-base-dir: ${{ inputs.infra-base-dir }}
           deploy: ${{ inputs.deploy }}
           destroy: ${{ inputs.destroy }}
+          

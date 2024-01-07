@@ -25,6 +25,9 @@ inputs:
     description: "The Infra Base Directory."
     required: false
     default: "infra"
+  access-token:
+    description: "Pulumi Access Token."
+    required: true
 runs:
   using: "composite"
   steps:
@@ -35,6 +38,7 @@ runs:
       run: |
         cd ${{ inputs.infra-base-dir }}
         echo "Logging into Pulumi..."
+        export PULUMI_ACCESS_TOKEN=${{ inputs.access-token }}
         pulumi login
         # pulumi org set-default tychodev-org
         echo "Initializing Pulumi Stack for ${{ inputs.environment }} ${{ inputs.region }}..."
