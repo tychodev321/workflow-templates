@@ -49,7 +49,7 @@ jobs:
       # with sigstore/fulcio when running outside of PRs.
       id-token: write
     steps:
-      - name: Deploy
+      - name: Publish
         uses: tychodev321/workflow-templates/.github/actions/container-publish@main
         with:
           registry: ${{ env.REGISTRY }}
