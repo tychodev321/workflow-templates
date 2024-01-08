@@ -1,10 +1,30 @@
-name: Container Publish
-description: "Build & Publish Container Images"
+name: Build Python Module
+description: "Build Python Module"
 inputs:
   caching:
     description: "Whether to cache dependencies or not."
     required: false
     default: "true"
+  enable-tests:
+    description: "Whether to run unit tests or not."
+    required: false
+    default: "true"
+  upload-test-results:
+    description: "Whether to upload test results or not."
+    required: false
+    default: "false"
+  upload-module:
+    description: "Whether to upload module or not."
+    required: false
+    default: "false"
+  pytest-test-opts:
+    description: "PyTest Test Options."
+    required: false
+    default: "tests/"
+  pytest-cli-opts:
+    description: "PyTest CLI Options."
+    required: false
+    default: ""
 outputs:
   used-cache:
     description: "Whether the cache was used."
